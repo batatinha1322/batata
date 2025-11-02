@@ -158,3 +158,19 @@ h1 {
   transition: transform 2.5s ease-in, opacity 2.5s ease-in;
   z-index: 9999;
 }
+#creditos {
+  position: fixed;
+  bottom: 10px;       /* distância do fundo */
+  right: 15px;        /* distância da borda direita */
+  font-size: 14px;
+  color: #222;
+  opacity: 0.7;
+  font-style: italic;
+  user-select: none;
+  z-index: 50;
+  transition: opacity 0.3s;
+}
+
+#creditos:hover {
+  opacity: 1;         /* fica visível quando o mouse passa por cima */
+}
