@@ -87,6 +87,26 @@
       max-width: 300px;
     }
 
+    /* Botão de som */
+    #somBtn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: rgba(255, 255, 255, 0.7);
+      border: none;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      cursor: pointer;
+      font-size: 1.2em;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+      transition: background 0.3s;
+    }
+
+    #somBtn:hover {
+      background: rgba(255,255,255,0.9);
+    }
+
     /* Efeito flutuante */
     .float-text {
       position: absolute;
@@ -113,6 +133,7 @@
 </head>
 <body>
   <h1>💥 Jogo Clicker 💥</h1>
+  <button id="somBtn">🔊</button>
   <button id="botao">Clique!</button>
   <div id="contador">Cliques: 0</div>
 
@@ -126,6 +147,7 @@
   <script>
     let contagem = 0;
     let valorClique = 1;
+    let somAtivo = true;
 
     let upgradeComprado = false;
     let autoClickComprado = false;
@@ -139,8 +161,24 @@
     const superAutoClick = document.getElementById('superAutoClick');
     const goldClick = document.getElementById('goldClick');
     const mensagem = document.getElementById('mensagem');
+    const somBtn = document.getElementById('somBtn');
 
-    // 🔹 Carregar progresso salvo
+    // 🎵 Sons reais (coloque os arquivos na mesma pasta do HTML)
+    const somClique = new Audio("somClique.mp3"); // coloque aqui seu arquivo
+    const somUpgrade = new Audio("somUpgrade.mp3"); // e aqui outro
+
+    function tocarSom(audio) {
+      if (somAtivo) {
+        audio.currentTime = 0;
+        audio.play();
+      }
+    }
+
+    somBtn.addEventListener('click', () => {
+      somAtivo = !somAtivo;
+      somBtn.textContent = somAtivo ? "🔊" : "🔈";
+    });
+
     function carregarProgresso() {
       const dados = JSON.parse(localStorage.getItem("clickerGame"));
       if (dados) {
@@ -157,7 +195,6 @@
       }
     }
 
-    // 🔹 Salvar progresso automaticamente
     function salvarProgresso() {
       const dados = {
         contagem,
@@ -170,13 +207,11 @@
       localStorage.setItem("clickerGame", JSON.stringify(dados));
     }
 
-    // 🔹 Mostrar contador
     function atualizarContador() {
       contador.textContent = `Cliques: ${contagem}`;
       salvarProgresso();
     }
 
-    // 🔹 Verificar se desbloqueia upgrades
     function verificarUpgrades() {
       if (contagem >= 50 && !upgradeComprado) upgrade.disabled = false;
       if (contagem >= 140 && !autoClickComprado) autoClick.disabled = false;
@@ -184,7 +219,6 @@
       if (contagem >= 600 && !goldClickComprado) goldClick.disabled = false;
     }
 
-    // 🔹 Restaurar estado dos upgrades ao recarregar
     function restaurarUpgrades() {
       if (upgradeComprado) {
         valorClique = 2;
@@ -200,7 +234,6 @@
       }
     }
 
-    // 🔹 Efeito flutuante de clique
     function mostrarEfeito(x, y, texto) {
       const floatText = document.createElement("div");
       floatText.textContent = `+${texto}`;
@@ -211,15 +244,14 @@
       setTimeout(() => floatText.remove(), 1000);
     }
 
-    // 🔹 Clique manual
     botao.addEventListener('click', (e) => {
       contagem += valorClique;
       atualizarContador();
       verificarUpgrades();
       mostrarEfeito(e.clientX, e.clientY, valorClique);
+      tocarSom(somClique);
     });
 
-    // 🔹 Função de autoclick
     function iniciarAutoClick(qtd) {
       setInterval(() => {
         contagem += qtd;
@@ -228,7 +260,6 @@
       }, 1000);
     }
 
-    // 🔹 Upgrade de clique duplo
     upgrade.addEventListener('click', () => {
       if (contagem >= 50 && !upgradeComprado) {
         contagem -= 50;
@@ -238,10 +269,10 @@
         upgrade.textContent = "Upgrade comprado ✅";
         mensagem.textContent = "Agora cada clique vale 2!";
         atualizarContador();
+        tocarSom(somUpgrade);
       }
     });
 
-    // 🔹 AutoClick (+1/s)
     autoClick.addEventListener('click', () => {
       if (contagem >= 140 && !autoClickComprado) {
         contagem -= 140;
@@ -251,10 +282,10 @@
         mensagem.textContent = "Agora você ganha +1 clique por segundo!";
         atualizarContador();
         iniciarAutoClick(1);
+        tocarSom(somUpgrade);
       }
     });
 
-    // 🔹 Super AutoClick (+10/s)
     superAutoClick.addEventListener('click', () => {
       if (contagem >= 200 && !superAutoClickComprado) {
         contagem -= 200;
@@ -264,10 +295,10 @@
         mensagem.textContent = "Agora você ganha +10 cliques por segundo!";
         atualizarContador();
         iniciarAutoClick(10);
+        tocarSom(somUpgrade);
       }
     });
 
-    // 🔹 Clique de Ouro (x15)
     goldClick.addEventListener('click', () => {
       if (contagem >= 600 && !goldClickComprado) {
         contagem -= 600;
@@ -277,16 +308,15 @@
         goldClick.textContent = "Clique de Ouro ativado ✅";
         mensagem.textContent = "Agora cada clique vale 15!";
         atualizarContador();
+        tocarSom(somUpgrade);
       }
     });
 
-    // Começa com upgrades desativados
     upgrade.disabled = true;
     autoClick.disabled = true;
     superAutoClick.disabled = true;
     goldClick.disabled = true;
 
-    // 🔹 Iniciar jogo
     carregarProgresso();
   </script>
 </body>
