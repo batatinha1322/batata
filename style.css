@@ -1,0 +1,150 @@
+body {
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #89f7fe, #66a6ff);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  margin: 0;
+  color: #333;
+  overflow: hidden;
+}
+
+h1 {
+  margin-bottom: 18px;
+  font-size: 2.4em;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, .25);
+}
+
+#botao {
+  background: #ff4081;
+  border: none;
+  border-radius: 50%;
+  width: 150px;
+  height: 150px;
+  font-size: 1.4em;
+  color: #fff;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, .18);
+  transition: transform .08s, box-shadow .08s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#botao:active {
+  transform: scale(.95);
+}
+
+#contador {
+  font-size: 1.9em;
+  margin-top: 18px;
+}
+
+#upgrades {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-top: 18px;
+  width: 420px;
+}
+
+.upgrade-btn {
+  width: 100%;
+  background: #ffc107;
+  color: #333;
+  border: none;
+  padding: 12px 16px;
+  font-size: 1.05em;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background .15s;
+}
+
+.upgrade-btn:hover {
+  background: #ffca28;
+}
+
+.upgrade-btn:disabled {
+  background: #ddd;
+  color: #777;
+  cursor: not-allowed;
+}
+
+.reset {
+  background: #e53935;
+  color: #fff;
+}
+
+.reset:hover {
+  background: #ff4d4d;
+}
+
+#mensagem {
+  margin-top: 12px;
+  font-size: 1em;
+  color: #222;
+  text-align: center;
+  max-width: 380px;
+}
+
+/* 🐱 Gatinhos */
+#gatinhoContainer {
+  position: fixed;
+  left: 20px;
+  bottom: 20px;
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 8px;
+  align-items: center;
+  z-index: 10;
+}
+
+.gato {
+  font-size: 36px;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform-origin: center;
+  animation: gatopop .45s ease-out;
+}
+
+@keyframes gatopop {
+  from { transform: scale(0); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* ✨ Número flutuante do clique */
+.numero-flutuante {
+  position: fixed;
+  color: #fff;
+  font-weight: bold;
+  text-shadow: 1px 1px 3px black;
+  transition: transform 0.6s ease-out, opacity 0.6s ease-out;
+  pointer-events: none;
+  z-index: 999;
+  font-size: 22px;
+  animation: subir 0.6s ease-out forwards;
+}
+
+@keyframes subir {
+  from { transform: translateY(0); opacity: 1; }
+  to { transform: translateY(-50px); opacity: 0; }
+}
+
+/* 💰 chuva dourada */
+.moeda {
+  position: fixed;
+  top: -40px;
+  font-size: 28px;
+  color: gold;
+  text-shadow: 0 0 10px gold, 0 0 20px orange;
+  opacity: 1;
+  pointer-events: none;
+  transition: transform 2.5s ease-in, opacity 2.5s ease-in;
+  z-index: 9999;
+}
