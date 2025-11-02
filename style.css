@@ -17,13 +17,14 @@ h1 {
   text-shadow: 1px 1px 3px rgba(0, 0, 0, .25);
 }
 
+/* 🔘 Botão principal */
 #botao {
   background: #ff4081;
   border: none;
   border-radius: 50%;
-  width: 200px;          /* 🔼 tamanho maior */
-  height: 200px;         /* 🔼 tamanho maior */
-  font-size: 1.8em;      /* 🔼 texto maior */
+  width: 200px;
+  height: 200px;
+  font-size: 1.8em;
   color: #fff;
   cursor: pointer;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
@@ -34,7 +35,7 @@ h1 {
 }
 
 #botao:hover {
-  background: #ff5b93;   /* leve destaque ao passar o mouse */
+  background: #ff5b93;
 }
 
 #botao:active {
@@ -42,16 +43,12 @@ h1 {
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
 }
 
-
-#botao:active {
-  transform: scale(.95);
-}
-
 #contador {
   font-size: 1.9em;
   margin-top: 18px;
 }
 
+/* 📦 Upgrades */
 #upgrades {
   display: flex;
   flex-direction: column;
@@ -146,31 +143,20 @@ h1 {
   to { transform: translateY(-50px); opacity: 0; }
 }
 
-/* 💰 chuva dourada */
-.moeda {
+/* ✨ Partículas douradas (explosão) */
+.particula-dourada {
   position: fixed;
-  top: -40px;
-  font-size: 28px;
-  color: gold;
-  text-shadow: 0 0 10px gold, 0 0 20px orange;
-  opacity: 1;
   pointer-events: none;
-  transition: transform 2.5s ease-in, opacity 2.5s ease-in;
+  font-size: 22px;
+  color: gold;
+  text-shadow: 0 0 10px gold, 0 0 20px orange, 0 0 30px #ffd700;
+  filter: drop-shadow(0 0 8px gold);
+  animation: brilho 0.8s ease-in-out infinite alternate;
+  will-change: transform, opacity;
   z-index: 9999;
 }
-#creditos {
-  position: fixed;
-  bottom: 10px;       /* distância do fundo */
-  right: 15px;        /* distância da borda direita */
-  font-size: 14px;
-  color: #222;
-  opacity: 0.7;
-  font-style: italic;
-  user-select: none;
-  z-index: 50;
-  transition: opacity 0.3s;
-}
 
-#creditos:hover {
-  opacity: 1;         /* fica visível quando o mouse passa por cima */
+@keyframes brilho {
+  from { opacity: 1; transform: scale(1); }
+  to { opacity: 0.6; transform: scale(1.2); }
 }
