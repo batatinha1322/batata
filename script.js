@@ -133,34 +133,41 @@ function criarGato() {
   gatoContainer.appendChild(gato);
 }
 
-// 💰 Chuva de moedas douradas
-function chuvaDourada() {
-  if (!goldClickComprado) return;
+// 💥 Efeito de explosão dourada (mini explosão de partículas)
+function explosaoDourada(x, y) {
+  const numParticulas = 20;
+  for (let i = 0; i < numParticulas; i++) {
+    const particula = document.createElement("div");
+    particula.classList.add("particula-dourada");
+    particula.textContent = "✨"; // partícula dourada
+    document.body.appendChild(particula);
 
-  for (let i = 0; i < 12; i++) {
-    const moeda = document.createElement('div');
-    moeda.className = 'moeda';
-    moeda.innerHTML = '🪙';
-    document.body.appendChild(moeda);
+    // posição inicial
+    particula.style.left = x + "px";
+    particula.style.top = y + "px";
 
-    const startX = Math.random() * window.innerWidth;
-    moeda.style.left = `${startX}px`;
-    moeda.style.top = `-40px`;
+    // movimento aleatório
+    const angulo = Math.random() * 2 * Math.PI;
+    const distancia = 100 + Math.random() * 50;
+    const destinoX = Math.cos(angulo) * distancia;
+    const destinoY = Math.sin(angulo) * distancia;
 
-    const scale = 0.8 + Math.random() * 0.8;
-    moeda.style.transform = `scale(${scale})`;
+    // animação
+    particula.animate([
+      { transform: `translate(0, 0) scale(1)`, opacity: 1 },
+      { transform: `translate(${destinoX}px, ${destinoY}px) scale(0)`, opacity: 0 }
+    ], {
+      duration: 700 + Math.random() * 400,
+      easing: "ease-out",
+      fill: "forwards"
+    });
 
-    const duracao = 2500 + Math.random() * 1500;
-    setTimeout(() => {
-      moeda.style.transform = `translateY(${window.innerHeight}px) rotate(${720 + Math.random() * 360}deg) scale(${scale})`;
-      moeda.style.opacity = '0';
-    }, 20);
-
-    setTimeout(() => moeda.remove(), duracao);
+    // remove depois
+    setTimeout(() => particula.remove(), 1000);
   }
 }
 
-// 🖱️ Clique principal (tudo junto!)
+// 🖱️ Clique principal
 botao.addEventListener('click', (e) => {
   contagem += valorClique;
   atualizarContador();
@@ -180,8 +187,10 @@ botao.addEventListener('click', (e) => {
   }, 10);
   setTimeout(() => numero.remove(), 600);
 
-  // 💰 chuva dourada se o clique de ouro estiver ativo
-  if (goldClickComprado) chuvaDourada();
+  // 💥 explosão dourada se o clique de ouro estiver ativo
+  if (goldClickComprado) {
+    explosaoDourada(e.clientX, e.clientY);
+  }
 });
 
 // upgrades
