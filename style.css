@@ -1,0 +1,119 @@
+body {
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #89f7fe, #66a6ff);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  margin: 0;
+  color: #333;
+  overflow: hidden;
+}
+
+h1 {
+  margin-bottom: 18px;
+  font-size: 2.4em;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, .25);
+}
+
+#botao {
+  background: #ff4081;
+  border: none;
+  border-radius: 50%;
+  width: 150px;
+  height: 150px;
+  font-size: 1.4em;
+  color: #fff;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, .18);
+  transition: transform .08s, box-shadow .08s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 150px;
+}
+
+#botao:hover {
+  background: #ff5c93;
+  transform: scale(1.05);
+}
+
+#botao:active {
+  transform: scale(.95);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, .35);
+}
+
+#contador {
+  font-size: 1.9em;
+  margin-top: 18px;
+}
+
+.upgrade-btn {
+  margin-top: 14px;
+  background: #ffc107;
+  color: #333;
+  border: none;
+  padding: 12px 24px;
+  font-size: 1.05em;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background .15s, transform .08s;
+  min-width: 320px;
+  text-align: center;
+}
+
+.upgrade-btn:disabled {
+  background: #ddd;
+  color: #777;
+  cursor: not-allowed;
+}
+
+#reset {
+  margin-top: 18px;
+  background: #f44336;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+#mensagem {
+  margin-top: 12px;
+  font-size: 0.97em;
+  color: #222;
+  text-align: center;
+  max-width: 380px;
+}
+
+.float-text {
+  position: absolute;
+  color: #fff;
+  font-weight: 700;
+  font-size: 1.1em;
+  opacity: 1;
+  animation: floatUp 900ms ease-out forwards;
+  pointer-events: none;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, .35);
+}
+
+@keyframes floatUp {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  to {
+    transform: translateY(-70px);
+    opacity: 0;
+  }
+}
+
+.particle {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  pointer-events: none;
+}
