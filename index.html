@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <h1><title>Jogo Clicker</title>
+  <title>Jogo Clicker</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -15,6 +15,7 @@
       height: 100vh;
       margin: 0;
       color: #333;
+      overflow: hidden;
     }
 
     h1 {
@@ -34,6 +35,8 @@
       cursor: pointer;
       box-shadow: 0 5px 15px rgba(0,0,0,0.3);
       transition: transform 0.1s, box-shadow 0.1s;
+      position: relative;
+      overflow: hidden;
     }
 
     #botao:hover {
@@ -83,6 +86,29 @@
       text-align: center;
       max-width: 300px;
     }
+
+    /* Efeito flutuante */
+    .float-text {
+      position: absolute;
+      color: #fff;
+      font-weight: bold;
+      font-size: 1.2em;
+      opacity: 1;
+      animation: floatUp 1s ease-out forwards;
+      pointer-events: none;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.4);
+    }
+
+    @keyframes floatUp {
+      from {
+        transform: translateY(0);
+        opacity: 1;
+      }
+      to {
+        transform: translateY(-80px);
+        opacity: 0;
+      }
+    }
   </style>
 </head>
 <body>
@@ -90,7 +116,6 @@
   <button id="botao">Clique!</button>
   <div id="contador">Cliques: 0</div>
 
-  <!-- Botões de upgrades -->
   <button id="upgrade" class="upgrade-btn">x2 cliques! (50 cliques)</button>
   <button id="autoClick" class="upgrade-btn">QUEM TA CLICANDO? (140 cliques)</button>
   <button id="superAutoClick" class="upgrade-btn">DE ONDE TA VINDO ESSES CLIQUES? (200 cliques)</button>
@@ -115,10 +140,43 @@
     const goldClick = document.getElementById('goldClick');
     const mensagem = document.getElementById('mensagem');
 
-    function atualizarContador() {
-      contador.textContent = `Cliques: ${contagem}`;
+    // 🔹 Carregar progresso salvo
+    function carregarProgresso() {
+      const dados = JSON.parse(localStorage.getItem("clickerGame"));
+      if (dados) {
+        contagem = dados.contagem;
+        valorClique = dados.valorClique;
+        upgradeComprado = dados.upgradeComprado;
+        autoClickComprado = dados.autoClickComprado;
+        superAutoClickComprado = dados.superAutoClickComprado;
+        goldClickComprado = dados.goldClickComprado;
+
+        atualizarContador();
+        verificarUpgrades();
+        restaurarUpgrades();
+      }
     }
 
+    // 🔹 Salvar progresso automaticamente
+    function salvarProgresso() {
+      const dados = {
+        contagem,
+        valorClique,
+        upgradeComprado,
+        autoClickComprado,
+        superAutoClickComprado,
+        goldClickComprado
+      };
+      localStorage.setItem("clickerGame", JSON.stringify(dados));
+    }
+
+    // 🔹 Mostrar contador
+    function atualizarContador() {
+      contador.textContent = `Cliques: ${contagem}`;
+      salvarProgresso();
+    }
+
+    // 🔹 Verificar se desbloqueia upgrades
     function verificarUpgrades() {
       if (contagem >= 50 && !upgradeComprado) upgrade.disabled = false;
       if (contagem >= 140 && !autoClickComprado) autoClick.disabled = false;
@@ -126,14 +184,51 @@
       if (contagem >= 600 && !goldClickComprado) goldClick.disabled = false;
     }
 
-    // Clique manual
-    botao.addEventListener('click', () => {
+    // 🔹 Restaurar estado dos upgrades ao recarregar
+    function restaurarUpgrades() {
+      if (upgradeComprado) {
+        valorClique = 2;
+        upgrade.disabled = true;
+        upgrade.textContent = "Upgrade comprado ✅";
+      }
+      if (autoClickComprado) iniciarAutoClick(1);
+      if (superAutoClickComprado) iniciarAutoClick(10);
+      if (goldClickComprado) {
+        valorClique = 15;
+        goldClick.disabled = true;
+        goldClick.textContent = "Clique de Ouro ativado ✅";
+      }
+    }
+
+    // 🔹 Efeito flutuante de clique
+    function mostrarEfeito(x, y, texto) {
+      const floatText = document.createElement("div");
+      floatText.textContent = `+${texto}`;
+      floatText.classList.add("float-text");
+      floatText.style.left = x + "px";
+      floatText.style.top = y + "px";
+      document.body.appendChild(floatText);
+      setTimeout(() => floatText.remove(), 1000);
+    }
+
+    // 🔹 Clique manual
+    botao.addEventListener('click', (e) => {
       contagem += valorClique;
       atualizarContador();
       verificarUpgrades();
+      mostrarEfeito(e.clientX, e.clientY, valorClique);
     });
 
-    // Upgrade de clique duplo
+    // 🔹 Função de autoclick
+    function iniciarAutoClick(qtd) {
+      setInterval(() => {
+        contagem += qtd;
+        atualizarContador();
+        verificarUpgrades();
+      }, 1000);
+    }
+
+    // 🔹 Upgrade de clique duplo
     upgrade.addEventListener('click', () => {
       if (contagem >= 50 && !upgradeComprado) {
         contagem -= 50;
@@ -146,7 +241,7 @@
       }
     });
 
-    // AutoClick (+1/s)
+    // 🔹 AutoClick (+1/s)
     autoClick.addEventListener('click', () => {
       if (contagem >= 140 && !autoClickComprado) {
         contagem -= 140;
@@ -155,16 +250,11 @@
         autoClick.textContent = "AutoClick ativado ✅";
         mensagem.textContent = "Agora você ganha +1 clique por segundo!";
         atualizarContador();
-
-        setInterval(() => {
-          contagem += 1;
-          atualizarContador();
-          verificarUpgrades();
-        }, 1000);
+        iniciarAutoClick(1);
       }
     });
 
-    // Super AutoClick (+10/s)
+    // 🔹 Super AutoClick (+10/s)
     superAutoClick.addEventListener('click', () => {
       if (contagem >= 200 && !superAutoClickComprado) {
         contagem -= 200;
@@ -173,16 +263,11 @@
         superAutoClick.textContent = "Super AutoClick ativado ✅";
         mensagem.textContent = "Agora você ganha +10 cliques por segundo!";
         atualizarContador();
-
-        setInterval(() => {
-          contagem += 10;
-          atualizarContador();
-          verificarUpgrades();
-        }, 1000);
+        iniciarAutoClick(10);
       }
     });
 
-    // Novo upgrade: Clique de Ouro (valorClique = 15)
+    // 🔹 Clique de Ouro (x15)
     goldClick.addEventListener('click', () => {
       if (contagem >= 600 && !goldClickComprado) {
         contagem -= 600;
@@ -195,11 +280,14 @@
       }
     });
 
-    // Começa com os upgrades desativados
+    // Começa com upgrades desativados
     upgrade.disabled = true;
     autoClick.disabled = true;
     superAutoClick.disabled = true;
     goldClick.disabled = true;
+
+    // 🔹 Iniciar jogo
+    carregarProgresso();
   </script>
 </body>
 </html>
