@@ -7,28 +7,38 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <h1>💥 Jogo Clicker 💥</h1>
-
-  <button id="botao">Clique!</button>
-  <div id="contador">Cliques: 0</div>
-
-  <div id="upgrades">
-    <button id="upgrade" class="upgrade-btn" disabled>x2 cliques! (50 cliques)</button>
-    <button id="autoClick" class="upgrade-btn" disabled>QUEM TA CLICANDO? (140 cliques)</button>
-    <button id="superAutoClick" class="upgrade-btn" disabled>DE ONDE TA VINDO ESSES CLIQUES? (200 cliques)</button>
-    <button id="goldClick" class="upgrade-btn" disabled>CLIQUE DE OURO! (600 cliques)</button>
-    <button id="gatinhos" class="upgrade-btn" disabled>🐱 Gatinhos! (+5/s cada) (600 cliques)</button>
-
-    <button id="reset" class="upgrade-btn reset">Resetar Jogo</button>
+  <!-- 🏁 Tela inicial -->
+  <div id="telaInicial" class="tela-inicial">
+    <h1 class="titulo">Jogo Clicker COMPLETAMENTE NORMAL</h1>
+    <button id="btnIniciar" class="botao-inicial">▶️ Iniciar</button>
+    <p class="creditos">Um jogo 100% normal. Nada de estranho aqui.</p>
   </div>
 
-  <div id="mensagem"></div>
+  <!-- 🎮 Conteúdo principal do jogo -->
+  <div id="jogo" style="display: none; flex-direction: column; align-items: center; animation: fadeIn 0.8s ease;">
+    <h1>💥 Jogo Clicker 💥</h1>
 
-  <!-- 🐱 Container correto para os gatinhos -->
-  <div id="gatinhoContainer" aria-hidden="true"></div>
+    <button id="botao">Clique!</button>
+    <div id="contador">Cliques: 0</div>
 
-  <!-- 🔥 Script deve vir antes de fechar o body -->
+    <div id="upgrades">
+      <button id="upgrade" class="upgrade-btn" disabled>x2 cliques! (50 cliques)</button>
+      <button id="autoClick" class="upgrade-btn" disabled>QUEM TA CLICANDO? (140 cliques)</button>
+      <button id="superAutoClick" class="upgrade-btn" disabled>DE ONDE TA VINDO ESSES CLIQUES? (200 cliques)</button>
+      <button id="goldClick" class="upgrade-btn" disabled>CLIQUE DE OURO! (600 cliques)</button>
+      <button id="gatinhos" class="upgrade-btn" disabled>🐱 Gatinhos! (+5/s cada) (600 cliques)</button>
+
+      <button id="reset" class="upgrade-btn reset">Resetar Jogo</button>
+    </div>
+
+    <div id="mensagem"></div>
+
+    <!-- 🐱 Container para os gatinhos -->
+    <div id="gatinhoContainer" aria-hidden="true"></div>
+
+    <div id="creditos">desenvolvido por: arthur emanuel .A.S.</div>
+  </div>
+
   <script src="script.js"></script>
-  <div id="creditos">desenvolvido por: arthur emanuel .A.S.</div>
 </body>
 </html>
