@@ -271,3 +271,16 @@ for (let i = 0; i < gatosComprados; i++) criarGato();
 atualizarContador();
 atualizarBotoes();
 if (ganhoPorSegundoAuto > 0) startTick();
+// 🏁 Tela inicial
+const telaInicial = document.getElementById('telaInicial');
+const btnIniciar = document.getElementById('btnIniciar');
+const jogo = document.getElementById('jogo');
+
+btnIniciar.addEventListener('click', () => {
+  telaInicial.style.transition = 'opacity 0.6s ease';
+  telaInicial.style.opacity = '0';
+  setTimeout(() => {
+    telaInicial.style.display = 'none';
+    jogo.style.display = 'flex';
+  }, 600);
+});
