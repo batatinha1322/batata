@@ -1,20 +1,21 @@
+/* 🌈 Fundo e layout base */
 body {
   font-family: Arial, sans-serif;
   background: linear-gradient(135deg, #89f7fe, #66a6ff);
+  margin: 0;
+  color: #333;
+  overflow-x: hidden;
+}
+
+/* Área principal do jogo */
+#areaJogo {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  height: 100vh;
-  margin: 0;
-  color: #333;
-  overflow: hidden;
-}
-
-h1 {
-  margin-bottom: 18px;
-  font-size: 2.4em;
-  text-shadow: 1px 1px 3px rgba(0, 0, 0, .25);
+  justify-content: flex-start;
+  min-height: 100vh;
+  padding: 40px 20px;
+  box-sizing: border-box;
 }
 
 /* 🔘 Botão principal */
@@ -43,6 +44,7 @@ h1 {
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
 }
 
+/* Contador */
 #contador {
   font-size: 1.9em;
   margin-top: 18px;
@@ -56,6 +58,7 @@ h1 {
   gap: 10px;
   margin-top: 18px;
   width: 420px;
+  max-width: 90%;
 }
 
 .upgrade-btn {
@@ -125,7 +128,7 @@ h1 {
   to { transform: scale(1); opacity: 1; }
 }
 
-/* ✨ Número flutuante do clique */
+/* ✨ Número flutuante */
 .numero-flutuante {
   position: fixed;
   color: #fff;
@@ -143,7 +146,7 @@ h1 {
   to { transform: translateY(-50px); opacity: 0; }
 }
 
-/* ✨ Partículas douradas (explosão) */
+/* ✨ Partículas douradas */
 .particula-dourada {
   position: fixed;
   pointer-events: none;
@@ -160,61 +163,72 @@ h1 {
   from { opacity: 1; transform: scale(1); }
   to { opacity: 0.6; transform: scale(1.2); }
 }
-/* 🏁 Tela inicial */
-.tela-inicial {
+
+/* 🏠 Menu inicial */
+.menu {
   position: fixed;
-  inset: 0;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
   background: linear-gradient(135deg, #89f7fe, #66a6ff);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  z-index: 2000;
-  text-align: center;
-  animation: aparecer 0.6s ease-out;
+  color: #222;
+  z-index: 10000;
 }
 
-.titulo {
-  font-size: 3em;
-  color: #fff;
-  text-shadow: 2px 2px 6px rgba(0,0,0,0.4);
-  margin-bottom: 25px;
-  max-width: 600px;
+.menu h1 {
+  font-size: 2.4em;
+  margin-bottom: 30px;
+  text-shadow: 1px 1px 4px rgba(0,0,0,0.25);
 }
 
-.botao-inicial {
+.menu-btn {
   background: #ff4081;
-  color: white;
+  color: #fff;
   border: none;
-  border-radius: 12px;
-  padding: 16px 36px;
-  font-size: 1.5em;
-  margin-top: 20px;
+  padding: 14px 28px;
+  border-radius: 10px;
+  font-size: 1.2em;
+  margin: 10px;
   cursor: pointer;
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
-  transition: transform 0.2s, background 0.2s;
+  transition: background 0.2s, transform 0.1s;
 }
 
-.botao-inicial:hover {
+.menu-btn:hover {
   background: #ff5b93;
   transform: scale(1.05);
 }
 
-.creditos {
-  position: absolute;
-  bottom: 12px;
-  right: 18px;
+/* 📺 Botão de Tela Cheia no jogo */
+#btnTelaCheiaJogo {
+  position: fixed;
+  top: 15px;
+  right: 15px;
+  background: rgba(255, 64, 129, 0.9);
+  border: none;
+  color: white;
+  border-radius: 50%;
+  width: 45px;
+  height: 45px;
+  font-size: 1.2em;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  transition: transform 0.15s, background 0.2s;
+  z-index: 5000;
+}
+
+#btnTelaCheiaJogo:hover {
+  background: #ff5b93;
+  transform: scale(1.1);
+}
+
+/* Créditos */
+#creditos {
+  position: fixed;
+  bottom: 10px;
+  right: 20px;
   font-size: 0.9em;
-  color: rgba(255,255,255,0.85);
-  text-shadow: 1px 1px 3px rgba(0,0,0,0.4);
-}
-
-@keyframes aparecer {
-  from { opacity: 0; transform: scale(1.05); }
-  to { opacity: 1; transform: scale(1); }
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: scale(0.97); }
-  to { opacity: 1; transform: scale(1); }
+  color: rgba(0,0,0,0.7);
 }
