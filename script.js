@@ -284,3 +284,15 @@ btnIniciar.addEventListener('click', () => {
     jogo.style.display = 'flex';
   }, 600);
 });
+// 🖥️ Controle de Tela Cheia
+const fullscreenBtn = document.getElementById("fullscreen");
+
+fullscreenBtn.addEventListener("click", () => {
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen();
+    fullscreenBtn.textContent = "❌ Sair da Tela Cheia";
+  } else {
+    document.exitFullscreen();
+    fullscreenBtn.textContent = "🖥️ Tela Cheia";
+  }
+});
