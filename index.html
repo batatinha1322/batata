@@ -3,24 +3,36 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Jogo Clicker COMPLETAMENTE NORMAL</title>
+  <title>Jogo Cliquer COMPLETAMENTE NORMAL</title>
   <link rel="stylesheet" href="style.css" />
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 </head>
 <body>
-  <!-- 🏁 Tela inicial -->
-  <div id="telaInicial" class="tela-inicial">
-    <h1 class="titulo">Jogo Clicker COMPLETAMENTE NORMAL</h1>
-    <button id="btnIniciar" class="botao-inicial">▶️ Iniciar</button>
-    <p class="creditos">Um jogo 100% normal. Nada de estranho aqui.</p>
+  <!-- 🔐 Tela de Login/Cadastro -->
+  <div id="authContainer" class="menu">
+    <h1>🖱️ Jogo Cliquer COMPLETAMENTE NORMAL 🖱️</h1>
+    <input id="email" type="email" placeholder="Seu email" />
+    <input id="senha" type="password" placeholder="Sua senha" />
+    <button id="btnLogin">Entrar</button>
+    <button id="btnCadastro">Criar Conta</button>
+    <div id="authMensagem"></div>
   </div>
 
-  <!-- 🎮 Conteúdo principal do jogo -->
-  <div id="jogo" style="display: none; flex-direction: column; align-items: center; animation: fadeIn 0.8s ease;">
-    <h1>💥 Jogo Clicker 💥</h1>
+  <!-- 🎮 Menu inicial -->
+  <div id="menuInicial" class="menu" style="display:none;">
+    <h1>Bem-vindo!</h1>
+    <button id="btnComecar" class="menu-btn">▶️ Começar Jogo</button>
+    <button id="btnTelaCheia" class="menu-btn">🖥️ Tela Cheia</button>
+    <button id="btnSair" class="menu-btn">🚪 Sair da Conta</button>
+  </div>
+
+  <!-- 🎯 Área do jogo -->
+  <div id="areaJogo" style="display:none;">
+    <h1>💥 Jogo Cliquer 💥</h1>
 
     <button id="botao">Clique!</button>
     <div id="contador">Cliques: 0</div>
-    <button id="fullscreen" class="upgrade-btn">🖥️ Tela Cheia</button>
+
     <div id="upgrades">
       <button id="upgrade" class="upgrade-btn" disabled>x2 cliques! (50 cliques)</button>
       <button id="autoClick" class="upgrade-btn" disabled>QUEM TA CLICANDO? (140 cliques)</button>
@@ -32,13 +44,9 @@
     </div>
 
     <div id="mensagem"></div>
-
-    <!-- 🐱 Container para os gatinhos -->
     <div id="gatinhoContainer" aria-hidden="true"></div>
-
     <div id="creditos">desenvolvido por: arthur emanuel .A.S.</div>
   </div>
-
   <script src="script.js"></script>
 </body>
 </html>
