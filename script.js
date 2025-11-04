@@ -1,3 +1,68 @@
+// === 🔐 LOGIN E CADASTRO COM SUPABASE ===
+
+// ⚙️ Inicializa o Supabase
+const SUPABASE_URL = "https://ttvhrkxnpcvrxcoozrmf.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR0dmhya3hucGN2cnhjb296cm1mIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIyODkzMzksImV4cCI6MjA3Nzg2NTMzOX0.CzR8JMO3QvYL3YmGNs05iprapHG6ZVfYckz6YrxrGEU";
+
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// 🎯 Seleciona elementos do HTML
+const authContainer = document.getElementById("authContainer");
+const menuInicial = document.getElementById("menuInicial");
+const areaJogo = document.getElementById("areaJogo");
+
+const emailInput = document.getElementById("email");
+const senhaInput = document.getElementById("senha");
+const btnLogin = document.getElementById("btnLogin");
+const btnCadastro = document.getElementById("btnCadastro");
+const btnSair = document.getElementById("btnSair");
+const authMensagem = document.getElementById("authMensagem");
+
+// 🧩 Função para mostrar/esconder telas
+function mostrarTela(tela) {
+  authContainer.style.display = "none";
+  menuInicial.style.display = "none";
+  areaJogo.style.display = "none";
+  tela.style.display = "flex";
+}
+
+// 🚪 Verifica se há sessão ativa
+async function verificarSessao() {
+  const { data } = await supabase.auth.getSession();
+  if (data.session) {
+    mostrarTela(menuInicial);
+  } else {
+    mostrarTela(authContainer);
+  }
+}
+verificarSessao();
+
+// 👤 Criar conta
+btnCadastro.addEventListener("click", async () => {
+  const email = emailInput.value.trim();
+  const senha = senhaInput.value.trim();
+  const { error } = await supabase.auth.signUp({ email, password: senha });
+  authMensagem.textContent = error ? error.message : "Conta criada! Verifique seu email.";
+});
+
+// 🔑 Login
+btnLogin.addEventListener("click", async () => {
+  const email = emailInput.value.trim();
+  const senha = senhaInput.value.trim();
+  const { error } = await supabase.auth.signInWithPassword({ email, password: senha });
+  if (error) {
+    authMensagem.textContent = error.message;
+  } else {
+    mostrarTela(menuInicial);
+  }
+});
+
+// 🚪 Logout
+btnSair.addEventListener("click", async () => {
+  await supabase.auth.signOut();
+  mostrarTela(authContainer);
+});
+
 // estado
 let contagem = 0;
 let valorClique = 1;
@@ -271,28 +336,80 @@ for (let i = 0; i < gatosComprados; i++) criarGato();
 atualizarContador();
 atualizarBotoes();
 if (ganhoPorSegundoAuto > 0) startTick();
-// 🏁 Tela inicial
-const telaInicial = document.getElementById('telaInicial');
-const btnIniciar = document.getElementById('btnIniciar');
-const jogo = document.getElementById('jogo');
+// === Inicialização do menu + fullscreen (colocar NO FINAL do script.js) ===
+document.addEventListener('DOMContentLoaded', () => {
+  // procura pelos IDs que existem no seu HTML
+  const menu = document.getElementById('menuInicial'); // seu HTML usa menuInicial
+  const areaJogo = document.getElementById('areaJogo'); // seu HTML usa areaJogo
+  const btnComecar = document.getElementById('btnComecar'); // seu HTML usa btnComecar
+  const btnTelaCheia = document.getElementById('btnTelaCheia'); // seu HTML usa btnTelaCheia
 
-btnIniciar.addEventListener('click', () => {
-  telaInicial.style.transition = 'opacity 0.6s ease';
-  telaInicial.style.opacity = '0';
-  setTimeout(() => {
-    telaInicial.style.display = 'none';
-    jogo.style.display = 'flex';
-  }, 600);
-});
-// 🖥️ Controle de Tela Cheia
-const fullscreenBtn = document.getElementById("fullscreen");
+  // checagens úteis (se faltar algo, loga no console e não quebra)
+  if (!menu) console.error('menuInicial não encontrado');
+  if (!areaJogo) console.error('areaJogo não encontrada');
+  if (!btnComecar) console.error('btnComecar não encontrado');
+  if (!btnTelaCheia) console.error('btnTelaCheia não encontrado');
 
-fullscreenBtn.addEventListener("click", () => {
-  if (!document.fullscreenElement) {
-    document.documentElement.requestFullscreen();
-    fullscreenBtn.textContent = "❌ Sair da Tela Cheia";
-  } else {
-    document.exitFullscreen();
-    fullscreenBtn.textContent = "🖥️ Tela Cheia";
+  if (!menu || !areaJogo || !btnComecar || !btnTelaCheia) {
+    // não prosseguir se o HTML estiver inconsistente
+    return;
   }
+
+  // função para abrir o jogo (fade / transição)
+  function abrirJogo() {
+    menu.style.transition = 'opacity 0.5s ease';
+    menu.style.opacity = '0';
+    setTimeout(() => {
+      menu.style.display = 'none';
+      areaJogo.style.display = 'flex';
+      areaJogo.style.opacity = '0';
+      areaJogo.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+      areaJogo.style.transform = 'scale(0.98)';
+      requestAnimationFrame(() => {
+        areaJogo.style.opacity = '1';
+        areaJogo.style.transform = 'scale(1)';
+      });
+    }, 500);
+  }
+
+  // handler do botão Começar
+  btnComecar.addEventListener('click', () => {
+    abrirJogo();
+  });
+
+  // handler do botão Tela Cheia (no menu)
+  btnTelaCheia.addEventListener('click', async () => {
+    try {
+      if (!document.fullscreenElement) {
+        await document.documentElement.requestFullscreen();
+        btnTelaCheia.textContent = '❌ Sair da Tela Cheia';
+      } else {
+        await document.exitFullscreen();
+        btnTelaCheia.textContent = '🖥️ Tela Cheia';
+      }
+    } catch (err) {
+      console.error('Erro ao alternar fullscreen:', err);
+    }
+  });
+
+  // manter texto do botão sincronizado caso o usuário saia com ESC
+  document.addEventListener('fullscreenchange', () => {
+    if (!document.fullscreenElement) {
+      btnTelaCheia.textContent = '🖥️ Tela Cheia';
+    } else {
+      btnTelaCheia.textContent = '❌ Sair da Tela Cheia';
+    }
+  });
+
+  console.log('Menu configurado corretamente.');
 });
+const btnTelaCheia = document.getElementById('btnTelaCheiaJogo');
+if (btnTelaCheia) {
+  btnTelaCheia.addEventListener('click', () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen();
+    } else {
+      document.exitFullscreen();
+    }
+  });
+}
