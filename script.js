@@ -1,12 +1,11 @@
-// =================== script.js completo ===================
-// 1) Supabase config (use sua URL e anon key)
+// ------------------- CONFIGURAÇÃO SUPABASE -------------------
 const SUPABASE_URL = 'https://ttvhrkxnpcvrxcoozrmf.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR0dmhya3hucGN2cnhjb296cm1mIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIyODkzMzksImV4cCI6MjA3Nzg2NTMzOX0.CzR8JMO3QvYL3YmGNs05iprapHG6ZVfYckz6YrxrGEU';
 const supabase = window.supabase && window.supabase.createClient
   ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
   : null;
 
-// =================== Estado do jogo ===================
+// ------------------- ESTADO DO JOGO -------------------
 let contagem = 0;
 let valorClique = 1;
 let gatosComprados = 0;
@@ -20,7 +19,7 @@ let goldClickComprado = false;
 // ganho por segundo (auto + super + gatos*5)
 let ganhoPorSegundoAuto = 0;
 
-// IDs/constantes/intervals
+// constantes
 const KEY = 'clickerSave_v2';
 let tickIntervalId = null;
 let saveTimeout = null;
@@ -35,13 +34,14 @@ const PRECO_GATINHO_BASE = 600;
 const MAX_GATOS = 10;
 const GATO_POWER = 5; // +5/s por gatinho
 
-// Usuário logado (supabase)
+// usuário supabase
 let currentUser = null;
 
-// =================== Elementos do DOM (pegar depois no DOMContentLoaded) ===================
-let el = {};
+// ------------------- ELEMENTOS DO DOM (serão populados no DOMContentLoaded) -------------------
+const el = {}; // container para elementos
+
 function queryEls() {
-  // elementos que o HTML fornece
+  // elementos de auth/menu/jogo - nomes esperados no seu HTML
   el.authContainer = document.getElementById('authContainer');
   el.emailInput = document.getElementById('email');
   el.senhaInput = document.getElementById('senha');
@@ -65,12 +65,13 @@ function queryEls() {
   el.reset = document.getElementById('reset');
   el.mensagem = document.getElementById('mensagem');
 
-  el.gatinhoContainer = document.getElementById('gatinhoContainer'); // seu container para gatos
-  // elementos opcionais
+  el.gatinhoContainer = document.getElementById('gatinhoContainer');
   el.creditos = document.getElementById('creditos');
-}
 
-// =================== Utilitários ===================
+  // botão full screen no jogo (canto superior direito). Se quiser um id diferente, adapte.
+  el.btnTelaCheiaJogo = document.getElementById('btnTelaCheiaJogo');
+}
+// ------------------- UTILITÁRIOS -------------------
 function precoGatinho() {
   return PRECO_GATINHO_BASE + (gatosComprados * 100);
 }
@@ -80,7 +81,8 @@ function salvarLocal() {
   try {
     const state = {
       contagem, valorClique, gatosComprados,
-      upgradeComprado, autoClickComprado, superAutoClickComprado, goldClickComprado
+      upgradeComprado, autoClickComprado, superAutoClickComprado, goldClickComprado,
+      ganhoPorSegundoAuto
     };
     localStorage.setItem(KEY, JSON.stringify(state));
   } catch (e) {
@@ -99,6 +101,7 @@ function carregarLocal() {
     autoClickComprado = !!data.autoClickComprado;
     superAutoClickComprado = !!data.superAutoClickComprado;
     goldClickComprado = !!data.goldClickComprado;
+    ganhoPorSegundoAuto = Number(data.ganhoPorSegundoAuto) || 0;
     return true;
   } catch (e) {
     console.warn('carregarLocal falhou', e);
@@ -106,7 +109,7 @@ function carregarLocal() {
   }
 }
 
-// =================== Salvar/Carregar no Supabase (JSON em campo `dados`) ===================
+// ------------------- SUPABASE: DB (CRUD do progresso) -------------------
 async function carregarProgressoDB(userId) {
   if (!supabase) return null;
   try {
@@ -115,7 +118,7 @@ async function carregarProgressoDB(userId) {
       .select('dados')
       .eq('user_id', userId)
       .single();
-    if (error && error.code !== 'PGRST116') { // PGRST116 = no rows returned
+    if (error && error.code !== 'PGRST116') {
       console.error('Erro ao buscar progresso no DB:', error);
       return null;
     }
@@ -141,7 +144,8 @@ async function criarProgressoDB(userId, initialState = {}) {
           super: initialState.superAutoClickComprado ?? false,
           gold: initialState.goldClickComprado ?? false
         }
-      }
+      },
+      atualizado_em: new Date().toISOString()
     };
     const { data, error } = await supabase.from('progressos').insert(row).select().single();
     if (error) { console.error('Erro criar progresso DB:', error); return null; }
@@ -152,7 +156,6 @@ async function criarProgressoDB(userId, initialState = {}) {
   }
 }
 
-// debounce + upsert
 async function salvarProgressoDBDebounced() {
   if (!currentUser) return;
   if (saveTimeout) clearTimeout(saveTimeout);
@@ -186,9 +189,6 @@ async function salvarProgressoDB() {
       .single();
     if (error) {
       console.error('Erro ao salvar progresso no DB:', error);
-    } else {
-      // sucesso
-      // console.log('Progresso salvo no DB');
     }
   } catch (e) {
     console.error('salvarProgressoDB exception', e);
@@ -208,7 +208,7 @@ function stopAutosaveDB() {
   }
 }
 
-// =================== UI / Game update ===================
+// ------------------- UI / ATUALIZAÇÕES -------------------
 function atualizarContador() {
   if (el.contador) el.contador.textContent = `Cliques: ${Math.floor(contagem)}`;
   salvarLocal();
@@ -241,7 +241,7 @@ function atualizarBotoes() {
   else el.goldClick.textContent = `CLIQUE DE OURO! (${PRECO_GOLD} cliques)`;
 }
 
-// recompute ganho por segundo
+// recalcular ganho por segundo
 function recalcularGanhoPorSegundo() {
   let ganho = 0;
   if (autoClickComprado) ganho += 1;
@@ -250,7 +250,7 @@ function recalcularGanhoPorSegundo() {
   ganhoPorSegundoAuto = ganho;
 }
 
-// tick (1s)
+// tick
 function startTick() {
   if (tickIntervalId) return;
   tickIntervalId = setInterval(() => {
@@ -262,10 +262,13 @@ function startTick() {
   }, 1000);
 }
 function stopTick() {
-  if (tickIntervalId) { clearInterval(tickIntervalId); tickIntervalId = null; }
+  if (tickIntervalId) {
+    clearInterval(tickIntervalId);
+    tickIntervalId = null;
+  }
 }
 
-// visual dos gatinhos
+// ------------------- VISUAIS: GATINHOS / NUMERO FLUTUANTE / PARTICULAS -------------------
 function criarGato() {
   if (!el.gatinhoContainer) return;
   const gato = document.createElement('div');
@@ -274,23 +277,24 @@ function criarGato() {
   el.gatinhoContainer.appendChild(gato);
 }
 
-// número flutuante (ao clicar)
 function mostrarNumeroFlutuante(x, y, texto) {
   const numero = document.createElement('span');
   numero.textContent = `+${texto}`;
   numero.className = 'numero-flutuante';
   document.body.appendChild(numero);
-  numero.style.left = x + 'px';
-  numero.style.top = (y - 20) + 'px';
-  // animação via CSS keyframes (classe já existe no CSS)
+  // posiciona dentro da viewport (ajusta se o número sair)
+  const px = Math.max(6, Math.min(window.innerWidth - 40, x));
+  const py = Math.max(6, Math.min(window.innerHeight - 40, y - 20));
+  numero.style.left = px + 'px';
+  numero.style.top = py + 'px';
+  // animação (CSS keyframes definidas no style.css)
   setTimeout(() => {
     numero.style.transform = 'translateY(-50px)';
     numero.style.opacity = '0';
   }, 10);
-  setTimeout(() => numero.remove(), 700);
+  setTimeout(() => numero.remove(), 800);
 }
 
-// explosão dourada
 function explosaoDourada(x, y) {
   const numParticulas = 18;
   for (let i = 0; i < numParticulas; i++) {
@@ -298,8 +302,11 @@ function explosaoDourada(x, y) {
     particula.classList.add('particula-dourada');
     particula.textContent = '✨';
     document.body.appendChild(particula);
-    particula.style.left = x + 'px';
-    particula.style.top = y + 'px';
+    // posicionamento seguro
+    const px = Math.max(6, Math.min(window.innerWidth - 40, x));
+    const py = Math.max(6, Math.min(window.innerHeight - 40, y));
+    particula.style.left = px + 'px';
+    particula.style.top = py + 'px';
 
     const angulo = Math.random() * Math.PI * 2;
     const distancia = 60 + Math.random() * 80;
@@ -319,7 +326,7 @@ function explosaoDourada(x, y) {
   }
 }
 
-// =================== Eventos principais do jogo ===================
+// ------------------- EVENTOS DO JOGO (attach) -------------------
 function attachGameEvents() {
   if (!el.botao) return;
 
@@ -328,7 +335,9 @@ function attachGameEvents() {
     atualizarContador();
     atualizarBotoes();
     mostrarNumeroFlutuante(e.clientX, e.clientY, valorClique);
-    if (goldClickComprado) explosaoDourada(e.clientX, e.clientY);
+    if (goldClickComprado) {
+      explosaoDourada(e.clientX, e.clientY);
+    }
   });
 
   if (el.upgrade) {
@@ -414,16 +423,20 @@ function attachGameEvents() {
   }
 }
 
-// =================== Menu / fullscreen / auth UI ===================
+// ------------------- MENU / FULLSCREEN / AUTH UI -------------------
 function attachMenuEvents() {
-  // menu começar
+  // Começar
   if (el.btnComecar) {
     el.btnComecar.addEventListener('click', () => {
       if (el.menuInicial) el.menuInicial.style.display = 'none';
       if (el.areaJogo) el.areaJogo.style.display = 'block';
+      // Garantir título no topo (se seu HTML mostrou sumido)
+      const h1 = document.querySelector('#areaJogo > h1');
+      if (h1) h1.textContent = '💥 Jogo Cliquer COMPLETAMENTE NORMAL 💥';
     });
   }
-  // fullscreen
+
+  // Tela cheia no menu
   if (el.btnTelaCheia) {
     el.btnTelaCheia.addEventListener('click', async () => {
       try {
@@ -439,15 +452,34 @@ function attachMenuEvents() {
       }
     });
   }
+
+  // Tela cheia no jogo (canto superior direito)
+  if (el.btnTelaCheiaJogo) {
+    el.btnTelaCheiaJogo.addEventListener('click', async () => {
+      try {
+        if (!document.fullscreenElement) {
+          await document.documentElement.requestFullscreen();
+        } else {
+          await document.exitFullscreen();
+        }
+      } catch (err) {
+        console.error('Erro fullscreen jogo:', err);
+      }
+    });
+  }
+
+  // Evento para manter texto sincronizado
   document.addEventListener('fullscreenchange', () => {
     if (!document.fullscreenElement) {
       if (el.btnTelaCheia) el.btnTelaCheia.textContent = '🖥️ Tela Cheia';
+      if (el.btnTelaCheiaJogo) el.btnTelaCheiaJogo.title = 'Tela cheia';
     } else {
       if (el.btnTelaCheia) el.btnTelaCheia.textContent = '❌ Sair da Tela Cheia';
+      if (el.btnTelaCheiaJogo) el.btnTelaCheiaJogo.title = 'Sair da tela cheia';
     }
   });
 
-  // logout button handler (se existir)
+  // Logout (se existir)
   if (el.btnSair) {
     el.btnSair.addEventListener('click', async () => {
       if (supabase) {
@@ -455,13 +487,14 @@ function attachMenuEvents() {
           await supabase.auth.signOut();
         } catch (e) { console.error('Erro signOut', e); }
       }
-      // recarrega pagina pra garantir estado limpo
+      // limpa estado local e recarrega
+      localStorage.removeItem(KEY);
       location.reload();
     });
   }
 }
 
-// =================== Auth: signup / signin handlers ===================
+// ------------------- AUTH HANDLERS -------------------
 function attachAuthEvents() {
   if (el.btnCadastro) {
     el.btnCadastro.addEventListener('click', async () => {
@@ -499,8 +532,8 @@ function attachAuthEvents() {
           if (el.authMensagem) el.authMensagem.textContent = 'Erro login: ' + res.error.message;
           return;
         }
-        // sucesso -> onAuthStateChange será chamado
         if (el.authMensagem) el.authMensagem.textContent = '';
+        // onAuthStateChange trata o restante
       } catch (e) {
         console.error('Erro signin', e);
         if (el.authMensagem) el.authMensagem.textContent = 'Erro ao logar';
@@ -512,23 +545,19 @@ function attachAuthEvents() {
 // quando usuário loga: sincroniza DB -> jogo
 async function onUserLogged(sessionUser) {
   currentUser = sessionUser;
-  // esconder auth, mostrar menu
   if (el.authContainer) el.authContainer.style.display = 'none';
   if (el.menuInicial) el.menuInicial.style.display = 'flex';
   if (el.areaJogo) el.areaJogo.style.display = 'none';
 
-  // garantir autosave no DB
   startAutosaveDB();
 
-  // tenta carregar do DB
   if (supabase && currentUser) {
     const saved = await carregarProgressoDB(currentUser.id);
     if (saved) {
-      // suporta formato antigo e novo
+      // carrega dados do DB (suporta formatos)
       contagem = Number(saved.contagem ?? saved.contador) || 0;
       valorClique = Number(saved.valorClique ?? saved.valor_clique) || Number(saved.valorClique) || 1;
       gatosComprados = Number(saved.gatosComprados ?? saved.gatos_comprados) || 0;
-      // upgrades: saved.upgrades (obj) ou booleans diretas
       if (saved.upgrades) {
         upgradeComprado = !!saved.upgrades.normal;
         autoClickComprado = !!saved.upgrades.auto;
@@ -544,7 +573,7 @@ async function onUserLogged(sessionUser) {
       document.querySelectorAll('.gato').forEach(g => g.remove());
       for (let i = 0; i < gatosComprados; i++) criarGato();
     } else {
-      // se não existe no DB, tenta carregar local (offline) e cria no DB
+      // se não existe no DB, tenta local (offline) e cria no DB
       const hadLocal = carregarLocal();
       await criarProgressoDB(currentUser.id, {
         contagem, valorClique, gatosComprados,
@@ -552,7 +581,6 @@ async function onUserLogged(sessionUser) {
       });
     }
   } else {
-    // sem supabase: tenta local
     carregarLocal();
   }
 
@@ -562,7 +590,7 @@ async function onUserLogged(sessionUser) {
   if (ganhoPorSegundoAuto > 0) startTick();
 }
 
-// onAuthStateChange supabase
+// onAuthStateChange supabase (observador)
 if (supabase) {
   supabase.auth.onAuthStateChange((event, session) => {
     const user = session && session.user ? session.user : null;
@@ -572,7 +600,6 @@ if (supabase) {
       // não logado
       currentUser = null;
       stopAutosaveDB();
-      // mostra tela de login
       if (el.authContainer) el.authContainer.style.display = 'flex';
       if (el.menuInicial) el.menuInicial.style.display = 'none';
       if (el.areaJogo) el.areaJogo.style.display = 'none';
@@ -580,31 +607,40 @@ if (supabase) {
   });
 }
 
-// =================== Inicialização geral ===================
+// ------------------- INICIALIZAÇÃO GERAL -------------------
 document.addEventListener('DOMContentLoaded', async () => {
-  // pegar elementos
+  // pegar elementos do DOM
   queryEls();
+
+  // trabalhar título (garantir que o título "Jogo Cliquer COMPLETAMENTE NORMAL" está presente)
+  // Se seu HTML tiver um h1 principal no menu/áreaJogo, ele será preservado; mas garantimos:
+  const mainTitle = document.querySelector('title');
+  if (mainTitle && mainTitle.textContent.indexOf('Cliquer') === -1) {
+    mainTitle.textContent = 'Jogo Cliquer COMPLETAMENTE NORMAL';
+  }
+  // também garante que o h1 dentro da área do jogo seja o título pedido
+  const areaH1 = document.querySelector('#areaJogo > h1');
+  if (areaH1) areaH1.textContent = '💥 Jogo Cliquer COMPLETAMENTE NORMAL 💥';
 
   // vincular eventos
   attachAuthEvents();
   attachMenuEvents();
   attachGameEvents();
 
-  // iniciar: se já existir sessão supabase -> handler será chamado via onAuthStateChange
+  // inicializa estado (tenta sessão supabase -> se houver, onUserLogged será chamado)
   if (supabase) {
     try {
       const { data } = await supabase.auth.getSession();
       if (data && data.session && data.session.user) {
-        // haverá chamada a onAuthStateChange, mas chamamos também por garantia
+        // chamamos onUserLogged para sincronizar UI
         onUserLogged(data.session.user);
       } else {
-        // sem sessão: tentar carregar local e mostrar auth
+        // sem sessão: tenta carregar local e mostrar auth
         carregarLocal();
         recalcularGanhoPorSegundo();
         atualizarContador();
         atualizarBotoes();
         if (ganhoPorSegundoAuto > 0) startTick();
-        // mostrar auth
         if (el.authContainer) el.authContainer.style.display = 'flex';
         if (el.menuInicial) el.menuInicial.style.display = 'none';
         if (el.areaJogo) el.areaJogo.style.display = 'none';
@@ -619,7 +655,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (ganhoPorSegundoAuto > 0) startTick();
     }
   } else {
-    // sem supabase disponível (debug)
+    // sem supabase: usa somente local
     console.warn('Supabase não está disponível — usando somente localStorage');
     carregarLocal();
     recalcularGanhoPorSegundo();
@@ -629,6 +665,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (el.authContainer) el.authContainer.style.display = 'none';
     if (el.menuInicial) el.menuInicial.style.display = 'flex';
   }
+
+  // criar visual dos gatos salvos (se houver)
+  for (let i = 0; i < gatosComprados; i++) criarGato();
+
+  // se area do jogo estiver visível, centraliza layout (ajuste para CSS reduzido)
+  if (el.areaJogo) {
+    // garante que areaJogo usa flex column e está centralizada verticalmente quando visível
+    el.areaJogo.style.display = el.areaJogo.style.display || 'flex';
+  }
 });
 
 // salvar antes de sair
@@ -636,17 +681,22 @@ window.addEventListener('beforeunload', () => {
   salvarLocal();
   if (currentUser) salvarProgressoDB();
 });
-// 🖥️ Botão de Tela Cheia
-const btnTelaCheia = document.getElementById("btnTelaCheia");
 
-if (btnTelaCheia) {
-  btnTelaCheia.addEventListener("click", () => {
-    if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen().catch((err) => {
-        console.warn("Erro ao ativar tela cheia:", err);
-      });
-    } else {
-      document.exitFullscreen();
+// botao tela cheia global (apenas compatibilidade se você tiver um id alternativo)
+(function registerGlobalFullscreenButton() {
+  const candidate = document.getElementById("btnTelaCheia");
+  if (!candidate) return;
+  candidate.addEventListener("click", async () => {
+    try {
+      if (!document.fullscreenElement) {
+        await document.documentElement.requestFullscreen();
+      } else {
+        await document.exitFullscreen();
+      }
+    } catch (err) {
+      console.warn('Erro fullscreen global:', err);
     }
   });
-}
+})();
+
+// fim do script.js
