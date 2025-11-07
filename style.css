@@ -290,3 +290,28 @@ h1 {
     max-width: 90%;
   }
 }
+/* Centraliza o jogo em qualquer tela */
+#areaJogo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start; /* ou center, se quiser tudo no meio vertical */
+  min-height: 100vh;
+  text-align: center;
+  margin: 0 auto;
+  max-width: 600px;
+  padding: 20px;
+}
+
+/* Impede que o botão de clique fique grudado na esquerda */
+#botao {
+  margin: 20px auto;
+  display: block;
+}
+
+/* Garante que o contador e os upgrades fiquem centralizados */
+#contador,
+#upgrades {
+  text-align: center;
+  width: 100%;
+}
