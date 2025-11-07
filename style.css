@@ -1,127 +1,280 @@
-/* 🌈 Fundo geral e centralização */
+/* 🌈 Fundo e layout geral */
 body {
+  font-family: 'Segoe UI', Tahoma, sans-serif;
+  background: linear-gradient(135deg, #89f7fe, #66a6ff);
   margin: 0;
   padding: 0;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  background: linear-gradient(135deg, #89f7fe, #66a6ff);
-  font-family: "Poppins", sans-serif;
   color: #222;
   overflow-x: hidden;
 }
 
-/* ✨ Containers principais */
-.menu, #areaJogo {
+/* ⚙️ Áreas principais centralizadas */
+#authContainer,
+#menuInicial,
+#areaJogo {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 15px;
+  min-height: 100vh;
   text-align: center;
-  width: 100%;
-  max-width: 500px;
-  padding: 20px;
   box-sizing: border-box;
-  border-radius: 15px;
-  background: rgba(255, 255, 255, 0.15);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  padding: 20px;
 }
 
-/* 🖱️ Botão principal de clique */
+/* 🪩 Títulos */
+h1 {
+  font-size: 2.4em;
+  margin-bottom: 25px;
+  color: #222;
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* ✉️ Login e cadastro */
+#authContainer input {
+  margin: 8px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: none;
+  width: 260px;
+  max-width: 80%;
+  font-size: 1em;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+}
+
+#authContainer button {
+  margin: 6px;
+  padding: 12px 22px;
+  border-radius: 10px;
+  border: none;
+  background: #ff4081;
+  color: white;
+  cursor: pointer;
+  font-size: 1em;
+  transition: transform 0.15s, background 0.25s;
+}
+
+#authContainer button:hover {
+  background: #ff5b93;
+  transform: scale(1.05);
+}
+
+/* 🖱️ Botão principal do jogo */
 #botao {
+  background: #ff4081;
+  color: #fff;
+  border: none;
+  border-radius: 50%;
   width: 200px;
   height: 200px;
-  border-radius: 50%;
-  background: radial-gradient(circle at top left, #ff4da6, #ff0066);
-  color: white;
-  font-size: 28px;
-  border: none;
+  font-size: 1.8em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  transition: transform 0.08s, box-shadow 0.08s, background 0.2s;
 }
 
 #botao:hover {
-  transform: scale(1.08);
-  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.35);
+  background: #ff5b93;
 }
 
-/* 📈 Contador */
+#botao:active {
+  transform: scale(0.95);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+}
+
+/* 🧮 Contador */
 #contador {
-  font-size: 24px;
-  font-weight: 600;
+  font-size: 1.8em;
+  margin-top: 18px;
 }
 
-/* ⚙️ Botões de upgrade */
+/* 🪙 Upgrades */
+#upgrades {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-top: 25px;
+  width: 420px;
+  max-width: 90%;
+}
+
 .upgrade-btn {
-  background: rgba(255, 255, 255, 0.8);
-  border: none;
-  border-radius: 10px;
-  padding: 12px;
   width: 100%;
-  font-size: 16px;
+  background: #ffc107;
+  border: none;
+  color: #222;
+  padding: 12px 16px;
+  border-radius: 12px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  font-size: 1.05em;
+  transition: background 0.2s, transform 0.1s;
 }
 
-.upgrade-btn:hover:enabled {
-  background: #ff7eb9;
-  color: white;
-  transform: scale(1.03);
+.upgrade-btn:hover {
+  background: #ffca28;
+  transform: scale(1.02);
 }
 
 .upgrade-btn:disabled {
-  opacity: 0.5;
+  background: #ddd;
+  color: #777;
   cursor: not-allowed;
 }
 
-/* 🔴 Botão de reset */
 .reset {
-  background: #ff4d4d;
-  color: white;
-  font-weight: bold;
+  background: #e53935;
+  color: #fff;
 }
 
 .reset:hover {
-  background: #ff1a1a;
+  background: #ff4d4d;
 }
 
-/* 🐱 Gatinho */
+/* 🐱 Gatinhos */
 #gatinhoContainer {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 8px;
-  font-size: 28px;
-}
-
-/* 🪪 Créditos */
-#creditos {
-  margin-top: 10px;
-  font-size: 12px;
-  color: rgba(0, 0, 0, 0.6);
-}
-
-/* 🖥️ Botão de tela cheia flutuante */
-#btnTelaCheia {
   position: fixed;
-  top: 15px;
-  right: 15px;
-  background: #ff4081;
-  border: none;
-  color: white;
-  font-size: 20px;
-  border-radius: 50%;
-  width: 45px;
-  height: 45px;
-  cursor: pointer;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-  transition: transform 0.15s ease;
+  left: 20px;
+  bottom: 20px;
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 8px;
+  align-items: center;
+  z-index: 10;
 }
 
-#btnTelaCheia:hover {
+.gato {
+  font-size: 36px;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform-origin: center;
+  animation: gatopop 0.45s ease-out;
+}
+
+@keyframes gatopop {
+  from { transform: scale(0); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* ✨ Efeitos visuais */
+.numero-flutuante {
+  position: fixed;
+  color: #fff;
+  font-weight: bold;
+  text-shadow: 1px 1px 3px black;
+  pointer-events: none;
+  z-index: 999;
+  font-size: 22px;
+  animation: subir 0.6s ease-out forwards;
+}
+
+@keyframes subir {
+  from { transform: translateY(0); opacity: 1; }
+  to { transform: translateY(-50px); opacity: 0; }
+}
+
+/* 🌟 Partículas douradas */
+.particula-dourada {
+  position: fixed;
+  pointer-events: none;
+  font-size: 22px;
+  color: gold;
+  text-shadow: 0 0 10px gold, 0 0 20px orange, 0 0 30px #ffd700;
+  animation: brilho 0.8s ease-in-out infinite alternate;
+}
+
+@keyframes brilho {
+  from { opacity: 1; transform: scale(1); }
+  to { opacity: 0.6; transform: scale(1.2); }
+}
+
+/* 🏠 Menu inicial */
+.menu {
+  background: linear-gradient(135deg, #89f7fe, #66a6ff);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #222;
+  text-align: center;
+  min-height: 100vh;
+}
+
+.menu h1 {
+  font-size: 2.3em;
+  margin-bottom: 30px;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.25);
+}
+
+/* 🎮 Botões do menu */
+.menu-btn {
+  background: #ff4081;
+  color: white;
+  border: none;
+  padding: 14px 28px;
+  border-radius: 12px;
+  font-size: 1.2em;
+  margin: 8px;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.menu-btn:hover {
+  background: #ff5b93;
+  transform: scale(1.05);
+}
+
+/* 🖥️ Botão de tela cheia */
+#btnTelaCheia, #btnTelaCheiaJogo {
+  position: fixed;
+  top: 18px;
+  right: 18px;
+  background: #ff4081;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 55px;
+  height: 55px;
+  font-size: 0.85em;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  transition: background 0.25s, transform 0.15s;
+  z-index: 9999;
+}
+
+#btnTelaCheia:hover, #btnTelaCheiaJogo:hover {
+  background: #ff5b93;
   transform: scale(1.1);
+}
+
+#btnTelaCheia::before, #btnTelaCheiaJogo::before {
+  content: "🖥️";
+  font-size: 1.2em;
+}
+
+#btnTelaCheia::after, #btnTelaCheiaJogo::after {
+  content: "Tela\nCheia";
+  font-size: 0.65em;
+  text-align: center;
+  white-space: pre-line;
+}
+
+/* 📜 Créditos */
+#creditos {
+  position: fixed;
+  bottom: 8px;
+  right: 15px;
+  font-size: 0.85em;
+  color: rgba(0, 0, 0, 0.6);
 }
