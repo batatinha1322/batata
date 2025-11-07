@@ -340,3 +340,34 @@ h1 {
 .ranking-item:nth-child(1) { background: gold; color: black; font-weight: 700; }
 .ranking-item:nth-child(2) { background: silver; }
 .ranking-item:nth-child(3) { background: #cd7f32; color: white; }
+/* 🏆 Ranking */
+#rankingContainer {
+  margin-top: 30px;
+  background: rgba(255, 255, 255, 0.25);
+  padding: 15px 25px;
+  border-radius: 12px;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(6px);
+  max-width: 360px;
+}
+
+#rankingContainer h2 {
+  margin-bottom: 12px;
+  font-size: 1.3em;
+  color: #222;
+}
+
+#rankingLista {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  text-align: left;
+}
+
+#rankingLista li {
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 8px;
+  padding: 6px 10px;
+  margin: 4px 0;
+  font-weight: 500;
+}
