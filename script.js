@@ -264,6 +264,36 @@ async function mostrarNomeUsuario() {
     document.body.appendChild(nomeEl);
   }
 }
+// ------------------- RANKING -------------------
+async function carregarRanking() {
+  if (!supabase) return;
+
+  try {
+    const { data, error } = await supabase
+      .from("usuarios")
+      .select("username, cliques")
+      .order("cliques", { ascending: false })
+      .limit(10);
+
+    if (error) {
+      console.error("Erro ao carregar ranking:", error);
+      return;
+    }
+
+    const lista = document.getElementById("rankingLista");
+    if (!lista) return;
+
+    lista.innerHTML = "";
+
+    data.forEach((usuario, i) => {
+      const li = document.createElement("li");
+      li.textContent = `${i + 1}. ${usuario.username} — ${usuario.cliques ?? 0} cliques`;
+      lista.appendChild(li);
+    });
+  } catch (e) {
+    console.error("Exceção ao carregar ranking:", e);
+  }
+}
 
 // ------------------- UI / ATUALIZAÇÕES -------------------
 function atualizarContador() {
@@ -626,6 +656,9 @@ async function onUserLogged(sessionUser) {
   if (el.authContainer) el.authContainer.style.display = 'none';
   if (el.menuInicial) el.menuInicial.style.display = 'flex';
   if (el.areaJogo) el.areaJogo.style.display = 'none';
+
+  carregarRanking(); // 🔥 Atualiza ranking quando o jogador entra
+mostrarNomeUsuario(); // 👤 Mostra o nome do jogador no topo
 
   startAutosaveDB();
 
