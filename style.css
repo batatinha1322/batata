@@ -273,3 +273,20 @@ h1 {
   width: 100%;
   margin: 0 auto;
 }
+/* 🖥️ Centralização perfeita do jogo em qualquer tela */
+#areaJogo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  text-align: center;
+  margin: 0 auto;
+  max-width: 600px; /* impede que fique espalhado demais em monitores grandes */
+  padding: 20px;
+}
+@media (max-width: 768px) {
+  #areaJogo {
+    max-width: 90%;
+  }
+}
