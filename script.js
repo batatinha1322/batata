@@ -46,7 +46,38 @@ function queryEls() {
   el.emailInput = document.getElementById('email');
   el.senhaInput = document.getElementById('senha');
   el.btnLogin = document.getElementById('btnLogin');
-  el.btnCadastro = document.getElementById('btnCadastro');
+  btnCadastro.addEventListener("click", async () => {
+  const email = document.getElementById("email").value.trim();
+  const senha = document.getElementById("senha").value.trim();
+  const username = document.getElementById("username").value.trim();
+
+  if (!email || !senha || !username) {
+    authMensagem.textContent = "Preencha todos os campos!";
+    return;
+  }
+
+  try {
+    // cria o usuário no Supabase Auth
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password: senha,
+    });
+
+    if (error) throw error;
+
+    const user = data.user;
+
+    // adiciona o nome de usuário na tabela "usuarios"
+    await supabase.from("usuarios").insert([
+      { id: user.id, username: username, cliques: 0 }
+    ]);
+
+    authMensagem.textContent = "Conta criada com sucesso! Faça login.";
+  } catch (err) {
+    authMensagem.textContent = "Erro ao criar conta: " + err.message;
+  }
+});
+
   el.authMensagem = document.getElementById('authMensagem');
 
   el.menuInicial = document.getElementById('menuInicial');
@@ -207,12 +238,53 @@ function stopAutosaveDB() {
     autosaveInterval = null;
   }
 }
+async function mostrarNomeUsuario() {
+  // Pega o usuário logado no Supabase Auth
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return;
+
+  // Busca o nome de usuário na tabela "usuarios"
+  const { data } = await supabase
+    .from("usuarios")
+    .select("username")
+    .eq("id", user.id)
+    .single();
+
+  // Se encontrar, cria e mostra um texto com o nome
+  if (data) {
+    const nomeEl = document.createElement("div");
+    nomeEl.id = "nomeJogador";
+    nomeEl.textContent = `👤 Jogador: ${data.username}`;
+    nomeEl.style.position = "fixed";
+    nomeEl.style.top = "10px";
+    nomeEl.style.left = "10px";
+    nomeEl.style.fontWeight = "bold";
+    nomeEl.style.color = "#222";
+    nomeEl.style.fontSize = "1.1em";
+    document.body.appendChild(nomeEl);
+  }
+}
 
 // ------------------- UI / ATUALIZAÇÕES -------------------
 function atualizarContador() {
   if (el.contador) el.contador.textContent = `Cliques: ${Math.floor(contagem)}`;
   salvarLocal();
-  if (currentUser) salvarProgressoDBDebounced();
+  if (currentUser) {
+    salvarProgressoDBDebounced();
+    atualizarRankingDB(); // 👈 atualiza ranking sempre que o contador muda
+  }
+}
+
+async function atualizarRankingDB() {
+  if (!currentUser || !supabase) return;
+  try {
+    await supabase
+      .from("usuarios")
+      .update({ cliques: contagem })
+      .eq("id", currentUser.id);
+  } catch (e) {
+    console.error("Erro ao atualizar ranking:", e);
+  }
 }
 function atualizarBotoes() {
   if (!el.upgrade) return;
