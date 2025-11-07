@@ -636,3 +636,17 @@ window.addEventListener('beforeunload', () => {
   salvarLocal();
   if (currentUser) salvarProgressoDB();
 });
+// 🖥️ Botão de Tela Cheia
+const btnTelaCheia = document.getElementById("btnTelaCheia");
+
+if (btnTelaCheia) {
+  btnTelaCheia.addEventListener("click", () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch((err) => {
+        console.warn("Erro ao ativar tela cheia:", err);
+      });
+    } else {
+      document.exitFullscreen();
+    }
+  });
+}
