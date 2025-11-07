@@ -296,35 +296,41 @@ function mostrarNumeroFlutuante(x, y, texto) {
 }
 
 function explosaoDourada(x, y) {
-  const numParticulas = 18;
+  const numParticulas = 6;
   for (let i = 0; i < numParticulas; i++) {
-    const particula = document.createElement('div');
-    particula.classList.add('particula-dourada');
-    particula.textContent = '✨';
+    const particula = document.createElement("div");
+    particula.className = "particula-dourada";
+    particula.textContent = "✨";
     document.body.appendChild(particula);
-    // posicionamento seguro
+
+    // posição segura dentro da tela
     const px = Math.max(6, Math.min(window.innerWidth - 40, x));
     const py = Math.max(6, Math.min(window.innerHeight - 40, y));
-    particula.style.left = px + 'px';
-    particula.style.top = py + 'px';
+    particula.style.left = px + "px";
+    particula.style.top = py + "px";
 
+    // espalhamento natural e leve
     const angulo = Math.random() * Math.PI * 2;
-    const distancia = 60 + Math.random() * 80;
+    const distancia = Math.random() * 60 + 30; // antes 60~140
     const destinoX = Math.cos(angulo) * distancia;
     const destinoY = Math.sin(angulo) * distancia;
 
-    particula.animate([
-      { transform: `translate(0,0) scale(1)`, opacity: 1 },
-      { transform: `translate(${destinoX}px, ${destinoY}px) scale(0)`, opacity: 0 }
-    ], {
-      duration: 600 + Math.random() * 400,
-      easing: 'ease-out',
-      fill: 'forwards'
-    });
+    particula.animate(
+      [
+        { transform: `translate(0, 0) scale(1)`, opacity: 1 },
+        { transform: `translate(${destinoX}px, ${destinoY}px) scale(0.8)`, opacity: 0 },
+      ],
+      {
+        duration: 900,
+        easing: "ease-out",
+        fill: "forwards",
+      }
+    );
 
-    setTimeout(() => particula.remove(), 1100);
+    setTimeout(() => particula.remove(), 1000);
   }
 }
+
 
 // ------------------- EVENTOS DO JOGO (attach) -------------------
 function attachGameEvents() {
