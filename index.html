@@ -9,21 +9,22 @@
 </head>
 <body>
   <!-- 🔐 Tela de Login/Cadastro -->
-  <div id="authContainer" class="menu">
-    <h1>🖱️ Jogo Cliquer COMPLETAMENTE NORMAL 🖱️</h1>
-    <input id="email" type="email" placeholder="Seu email" />
-    <input id="senha" type="password" placeholder="Sua senha" />
-    <input id="username" type="text" placeholder="Seu nome de usuário" />
-    <button id="btnLogin">Entrar</button>
-    <button id="btnCadastro">Criar Conta</button>
-    <div id="authMensagem"></div>
-  </div>
+<div id="authContainer" class="menu">
+  <h1>🖱️ Jogo Cliquer COMPLETAMENTE NORMAL 🖱️</h1>
+  <input id="email" type="email" placeholder="Seu email" />
+  <input id="senha" type="password" placeholder="Sua senha" />
+  <input id="username" type="text" placeholder="Nome de usuário (somente no cadastro)" />
+  <button id="btnLogin">Entrar</button>
+  <button id="btnCadastro">Criar Conta</button>
+  <div id="authMensagem"></div>
+</div>
 
   <!-- 🎮 Menu inicial -->
   <div id="menuInicial" class="menu" style="display:none;">
     <h1>Bem-vindo!</h1>
     <button id="btnComecar" class="menu-btn">▶️ Começar Jogo</button>
     <button id="btnTelaCheia" class="menu-btn">🖥️ Tela Cheia</button>
+    <button id="btnRanking" class="menu-btn">🏆 Ranking</button>
     <button id="btnSair" class="menu-btn">🚪 Sair da Conta</button>
   </div>
 
@@ -51,5 +52,10 @@
     <div id="creditos">desenvolvido por: arthur emanuel .A.S.</div>
   </div>
   <script src="script.js"></script>
+  <div id="rankingContainer" class="menu" style="display:none;">
+  <h1>🏆 Ranking Global</h1>
+  <div id="rankingLista"></div>
+  <button id="btnVoltarMenu" class="menu-btn">⬅️ Voltar</button>
+</div>
 </body>
 </html>
